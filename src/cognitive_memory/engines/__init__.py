@@ -8,6 +8,11 @@ from cognitive_memory.engines.consolidation import (
 from cognitive_memory.engines.decay import DecayEngine
 from cognitive_memory.engines.importance import ImportanceEngine
 from cognitive_memory.engines.retrieval import RetrievalEngine
+from cognitive_memory.engines.working_memory import (
+    WorkingMemoryManager,
+    WorkingMemorySlot,
+    WorkingMemoryState,
+)
 
 __all__ = [
     "ConsolidationCandidate",
@@ -16,4 +21,7 @@ __all__ = [
     "DecayEngine",
     "ImportanceEngine",
     "RetrievalEngine",
+    "WorkingMemoryManager",
+    "WorkingMemorySlot",
+    "WorkingMemoryState",
 ]
