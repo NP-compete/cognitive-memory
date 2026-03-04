@@ -1,0 +1,124 @@
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the form below.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of the bug.
+      placeholder: What happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Initialize with config '...'
+        2. Call method '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What you expected to happen.
+      placeholder: What should have happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: code
+    attributes:
+      label: Code Sample
+      description: Minimal code to reproduce the issue.
+      render: python
+      placeholder: |
+        from cognitive_memory import MemoryManager
+
+        memory = MemoryManager()
+        # ...
+
+  - type: textarea
+    id: error
+    attributes:
+      label: Error Output
+      description: Any error messages or stack traces.
+      render: shell
+
+  - type: dropdown
+    id: version
+    attributes:
+      label: Version
+      description: What version of cognitive-memory are you using?
+      options:
+        - 0.1.0 (latest)
+        - main branch
+        - Other (specify in description)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: python
+    attributes:
+      label: Python Version
+      options:
+        - "3.12"
+        - "3.11"
+        - "3.10"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - Docker
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: storage
+    attributes:
+      label: Storage Backends
+      description: Which storage backends are you using?
+      options:
+        - label: Qdrant
+        - label: Pinecone
+        - label: pgvector
+        - label: Neo4j
+        - label: Memgraph
+        - label: PostgreSQL
+        - label: SQLite
+        - label: Redis
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other context about the problem.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I have read the documentation
+          required: true

@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+title: "Cognitive Memory"
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - family-names: "Dutta"
+    given-names: "Soham"
+    email: "soham.dutta.devops@gmail.com"
+    orcid: ""
+repository-code: "https://github.com/NP-compete/cognitive-memory"
+url: "https://github.com/NP-compete/cognitive-memory"
+abstract: >-
+  Memory that forgets, like humans do. A production-grade memory system 
+  for AI agents with intelligent forgetting. Built on cognitive science 
+  principles: decay, rehearsal, consolidation, and importance-based retention.
+keywords:
+  - ai
+  - agents
+  - memory
+  - llm
+  - cognitive-science
+  - forgetting
+  - langgraph
+  - langchain
+license: MIT
+version: 0.1.0
+date-released: 2026-03-04
