@@ -79,8 +79,7 @@ class PgVectorBackend(VectorBackend):
             import asyncpg  # type: ignore[import-not-found]
         except ImportError as e:
             raise ImportError(
-                "asyncpg is required for PgVectorBackend. "
-                "Install it with: pip install asyncpg"
+                "asyncpg is required for PgVectorBackend. Install it with: pip install asyncpg"
             ) from e
 
         # Create connection pool
@@ -117,12 +116,15 @@ class PgVectorBackend(VectorBackend):
         index_name = f"{self.table_name}_embedding_idx"
 
         # Check if index exists
-        exists = await conn.fetchval("""
+        exists = await conn.fetchval(
+            """
             SELECT EXISTS (
                 SELECT 1 FROM pg_indexes
                 WHERE indexname = $1
             )
-        """, index_name)
+        """,
+            index_name,
+        )
 
         if exists:
             return
@@ -140,9 +142,7 @@ class PgVectorBackend(VectorBackend):
 
         elif self.index_type == "ivfflat":
             # IVFFlat requires data to be present for optimal list count
-            count = await conn.fetchval(
-                f"SELECT COUNT(*) FROM {self.table_name}"
-            )
+            count = await conn.fetchval(f"SELECT COUNT(*) FROM {self.table_name}")
             if count > 0:
                 await conn.execute(f"""
                     CREATE INDEX {index_name}
@@ -184,14 +184,19 @@ class PgVectorBackend(VectorBackend):
         payload_json = json.dumps(payload or {})
 
         async with self._pool.acquire() as conn:
-            await conn.execute(f"""
+            await conn.execute(
+                f"""
                 INSERT INTO {self.table_name} (id, embedding, payload, updated_at)
                 VALUES ($1, $2::vector, $3::jsonb, NOW())
                 ON CONFLICT (id) DO UPDATE SET
                     embedding = EXCLUDED.embedding,
                     payload = EXCLUDED.payload,
                     updated_at = NOW()
-            """, id, embedding_str, payload_json)
+            """,
+                id,
+                embedding_str,
+                payload_json,
+            )
 
     async def search(
         self,
@@ -227,7 +232,8 @@ class PgVectorBackend(VectorBackend):
             where_clause = "WHERE " + " AND ".join(conditions)
 
         async with self._pool.acquire() as conn:
-            rows = await conn.fetch(f"""
+            rows = await conn.fetch(
+                f"""
                 SELECT
                     id,
                     payload,
@@ -236,7 +242,9 @@ class PgVectorBackend(VectorBackend):
                 {where_clause}
                 ORDER BY embedding {operator} $1::vector
                 LIMIT $2
-            """, *params)
+            """,
+                *params,
+            )
 
         return [
             SearchResult(
@@ -260,9 +268,12 @@ class PgVectorBackend(VectorBackend):
         await self._ensure_initialized()
 
         async with self._pool.acquire() as conn:
-            result = await conn.execute(f"""
+            result = await conn.execute(
+                f"""
                 DELETE FROM {self.table_name} WHERE id = $1
-            """, id)
+            """,
+                id,
+            )
 
         # asyncpg returns "DELETE N" where N is rows affected
         return str(result).split()[-1] != "0"
@@ -280,9 +291,12 @@ class PgVectorBackend(VectorBackend):
         await self._ensure_initialized()
 
         async with self._pool.acquire() as conn:
-            row = await conn.fetchrow(f"""
+            row = await conn.fetchrow(
+                f"""
                 SELECT id, payload FROM {self.table_name} WHERE id = $1
-            """, id)
+            """,
+                id,
+            )
 
         if not row:
             return None
@@ -315,17 +329,22 @@ class PgVectorBackend(VectorBackend):
 
         async with self._pool.acquire() as conn, conn.transaction():
             for id, embedding, payload in items:
-                    embedding_str = f"[{','.join(str(x) for x in embedding)}]"
-                    payload_json = json.dumps(payload or {})
+                embedding_str = f"[{','.join(str(x) for x in embedding)}]"
+                payload_json = json.dumps(payload or {})
 
-                    await conn.execute(f"""
+                await conn.execute(
+                    f"""
                         INSERT INTO {self.table_name} (id, embedding, payload, updated_at)
                         VALUES ($1, $2::vector, $3::jsonb, NOW())
                         ON CONFLICT (id) DO UPDATE SET
                             embedding = EXCLUDED.embedding,
                             payload = EXCLUDED.payload,
                             updated_at = NOW()
-                    """, id, embedding_str, payload_json)
+                    """,
+                    id,
+                    embedding_str,
+                    payload_json,
+                )
 
         return len(items)
 
@@ -345,9 +364,12 @@ class PgVectorBackend(VectorBackend):
             return 0
 
         async with self._pool.acquire() as conn:
-            result = await conn.execute(f"""
+            result = await conn.execute(
+                f"""
                 DELETE FROM {self.table_name} WHERE id = ANY($1)
-            """, ids)
+            """,
+                ids,
+            )
 
         # asyncpg returns "DELETE N"
         return int(result.split()[-1])
