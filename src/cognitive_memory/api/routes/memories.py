@@ -9,9 +9,7 @@ from uuid import uuid4
 try:
     from fastapi import APIRouter, HTTPException, Query
 except ImportError as e:
-    raise ImportError(
-        "FastAPI is required. Install with: pip install cognitive-memory[api]"
-    ) from e
+    raise ImportError("FastAPI is required. Install with: pip install cognitive-memory[api]") from e
 
 from cognitive_memory.api.models import (
     ErrorResponse,

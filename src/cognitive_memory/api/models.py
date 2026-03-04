@@ -24,9 +24,7 @@ class MemoryCreate(BaseModel):
     importance: float | None = Field(
         default=None, ge=0.0, le=1.0, description="Explicit importance score"
     )
-    emotional_valence: float = Field(
-        default=0.0, ge=-1.0, le=1.0, description="Emotional valence"
-    )
+    emotional_valence: float = Field(default=0.0, ge=-1.0, le=1.0, description="Emotional valence")
     entities: list[str] = Field(default_factory=list, description="Named entities")
     topics: list[str] = Field(default_factory=list, description="Topics")
     metadata: dict[str, Any] = Field(default_factory=dict, description="Custom metadata")
@@ -36,9 +34,7 @@ class MemoryUpdate(BaseModel):
     """Request model for updating a memory."""
 
     content: str | None = Field(default=None, description="Updated content")
-    importance: float | None = Field(
-        default=None, ge=0.0, le=1.0, description="Updated importance"
-    )
+    importance: float | None = Field(default=None, ge=0.0, le=1.0, description="Updated importance")
     is_pinned: bool | None = Field(default=None, description="Pin status")
     is_archived: bool | None = Field(default=None, description="Archive status")
     entities: list[str] | None = Field(default=None, description="Updated entities")

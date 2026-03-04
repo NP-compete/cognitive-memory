@@ -7,9 +7,7 @@ from typing import Any
 try:
     from fastapi import APIRouter
 except ImportError as e:
-    raise ImportError(
-        "FastAPI is required. Install with: pip install cognitive-memory[api]"
-    ) from e
+    raise ImportError("FastAPI is required. Install with: pip install cognitive-memory[api]") from e
 
 from cognitive_memory import __version__
 
