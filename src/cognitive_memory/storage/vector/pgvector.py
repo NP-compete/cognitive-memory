@@ -76,7 +76,7 @@ class PgVectorBackend(VectorBackend):
             return
 
         try:
-            import asyncpg  # type: ignore[import-not-found]
+            import asyncpg
         except ImportError as e:
             raise ImportError(
                 "asyncpg is required for PgVectorBackend. Install it with: pip install asyncpg"
