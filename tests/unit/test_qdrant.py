@@ -154,9 +154,7 @@ class TestQdrantOperationsWithMockedClient:
         count = await mock_backend.count()
 
         assert count == 42
-        mock_backend._client.get_collection.assert_called_once_with(
-            mock_backend.collection_name
-        )
+        mock_backend._client.get_collection.assert_called_once_with(mock_backend.collection_name)
 
     @pytest.mark.asyncio
     async def test_count_zero(self, mock_backend: QdrantBackend) -> None:
