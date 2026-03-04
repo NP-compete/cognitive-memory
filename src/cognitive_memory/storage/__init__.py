@@ -1,7 +1,13 @@
 """Storage backends for cognitive memory."""
 
+from cognitive_memory.storage.cache.redis import RedisCacheBackend
 from cognitive_memory.storage.metadata.postgres import PostgresMetadataBackend
 from cognitive_memory.storage.vector.pgvector import PgVectorBackend
 from cognitive_memory.storage.vector.qdrant import QdrantBackend
 
-__all__ = ["PgVectorBackend", "PostgresMetadataBackend", "QdrantBackend"]
+__all__ = [
+    "PgVectorBackend",
+    "PostgresMetadataBackend",
+    "QdrantBackend",
+    "RedisCacheBackend",
+]
