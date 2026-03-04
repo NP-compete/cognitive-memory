@@ -55,7 +55,7 @@ class RedisCacheBackend(CacheBackend):
                 "redis is required for RedisCacheBackend. Install it with: pip install redis"
             ) from e
 
-        self._client = aioredis.from_url(  # type: ignore[no-untyped-call]
+        self._client = aioredis.from_url(
             self.url,
             max_connections=self.max_connections,
             decode_responses=self.decode_responses,
