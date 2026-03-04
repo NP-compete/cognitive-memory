@@ -39,7 +39,7 @@ class PostgresMetadataBackend(MetadataBackend):
             return
 
         try:
-            import asyncpg  # type: ignore[import-not-found]
+            import asyncpg
         except ImportError as e:
             raise ImportError(
                 "asyncpg is required for PostgresMetadataBackend. "
@@ -154,7 +154,8 @@ class PostgresMetadataBackend(MetadataBackend):
         }
 
         async with self._pool.acquire() as conn:
-            await conn.execute(f"""
+            await conn.execute(
+                f"""
                 INSERT INTO {self.table_name} (
                     id, memory_type, content, metadata, agent_id, user_id,
                     source, source_id, strength, initial_strength, importance,
@@ -316,12 +317,15 @@ class PostgresMetadataBackend(MetadataBackend):
         params.extend([limit, offset])
 
         async with self._pool.acquire() as conn:
-            rows = await conn.fetch(f"""
+            rows = await conn.fetch(
+                f"""
                 SELECT * FROM {self.table_name}
                 {where_clause}
                 ORDER BY created_at DESC
                 LIMIT ${param_idx} OFFSET ${param_idx + 1}
-            """, *params)
+            """,
+                *params,
+            )
 
         return [self._row_to_dict(row) for row in rows]
 
@@ -337,13 +341,17 @@ class PostgresMetadataBackend(MetadataBackend):
             accessed_at = datetime.now(timezone.utc)
 
         async with self._pool.acquire() as conn:
-            await conn.execute(f"""
+            await conn.execute(
+                f"""
                 UPDATE {self.table_name}
                 SET
                     access_count = access_count + 1,
                     last_accessed_at = $2
                 WHERE id = $1
-            """, memory_id, accessed_at)
+            """,
+                memory_id,
+                accessed_at,
+            )
 
     async def batch_save(self, memories: list[dict[str, Any]]) -> int:
         """Save multiple memories."""
@@ -455,12 +463,15 @@ class PostgresMetadataBackend(MetadataBackend):
             params.append(agent_id)
 
         async with self._pool.acquire() as conn:
-            rows = await conn.fetch(f"""
+            rows = await conn.fetch(
+                f"""
                 SELECT * FROM {self.table_name}
                 WHERE content ILIKE $1 {agent_filter}
                 ORDER BY created_at DESC
                 LIMIT $2
-            """, *params)
+            """,
+                *params,
+            )
 
         return [self._row_to_dict(row) for row in rows]
 

@@ -51,9 +51,7 @@ class TestPostgresOperationsWithMockedPool:
         return backend
 
     @pytest.mark.asyncio
-    async def test_get_memory_existing(
-        self, mock_backend: PostgresMetadataBackend
-    ) -> None:
+    async def test_get_memory_existing(self, mock_backend: PostgresMetadataBackend) -> None:
         """Get should return memory dict for existing ID."""
         mock_conn = AsyncMock()
         mock_row = {
@@ -94,9 +92,7 @@ class TestPostgresOperationsWithMockedPool:
         assert result["content"] == "Test content"
 
     @pytest.mark.asyncio
-    async def test_get_memory_nonexistent(
-        self, mock_backend: PostgresMetadataBackend
-    ) -> None:
+    async def test_get_memory_nonexistent(self, mock_backend: PostgresMetadataBackend) -> None:
         """Get should return None for nonexistent ID."""
         mock_conn = AsyncMock()
         mock_conn.fetchrow.return_value = None
@@ -107,9 +103,7 @@ class TestPostgresOperationsWithMockedPool:
         assert result is None
 
     @pytest.mark.asyncio
-    async def test_delete_memory_existing(
-        self, mock_backend: PostgresMetadataBackend
-    ) -> None:
+    async def test_delete_memory_existing(self, mock_backend: PostgresMetadataBackend) -> None:
         """Delete should return True for existing memory."""
         mock_conn = AsyncMock()
         mock_conn.execute.return_value = "DELETE 1"
@@ -120,9 +114,7 @@ class TestPostgresOperationsWithMockedPool:
         assert result is True
 
     @pytest.mark.asyncio
-    async def test_delete_memory_nonexistent(
-        self, mock_backend: PostgresMetadataBackend
-    ) -> None:
+    async def test_delete_memory_nonexistent(self, mock_backend: PostgresMetadataBackend) -> None:
         """Delete should return False for nonexistent memory."""
         mock_conn = AsyncMock()
         mock_conn.execute.return_value = "DELETE 0"
@@ -133,27 +125,21 @@ class TestPostgresOperationsWithMockedPool:
         assert result is False
 
     @pytest.mark.asyncio
-    async def test_batch_save_empty(
-        self, mock_backend: PostgresMetadataBackend
-    ) -> None:
+    async def test_batch_save_empty(self, mock_backend: PostgresMetadataBackend) -> None:
         """Batch save with empty list should return 0."""
         count = await mock_backend.batch_save([])
 
         assert count == 0
 
     @pytest.mark.asyncio
-    async def test_batch_delete_empty(
-        self, mock_backend: PostgresMetadataBackend
-    ) -> None:
+    async def test_batch_delete_empty(self, mock_backend: PostgresMetadataBackend) -> None:
         """Batch delete with empty list should return 0."""
         count = await mock_backend.batch_delete([])
 
         assert count == 0
 
     @pytest.mark.asyncio
-    async def test_batch_delete_multiple(
-        self, mock_backend: PostgresMetadataBackend
-    ) -> None:
+    async def test_batch_delete_multiple(self, mock_backend: PostgresMetadataBackend) -> None:
         """Batch delete should return count of deleted rows."""
         mock_conn = AsyncMock()
         mock_conn.execute.return_value = "DELETE 3"
@@ -175,9 +161,7 @@ class TestPostgresOperationsWithMockedPool:
         assert count == 42
 
     @pytest.mark.asyncio
-    async def test_count_with_filters(
-        self, mock_backend: PostgresMetadataBackend
-    ) -> None:
+    async def test_count_with_filters(self, mock_backend: PostgresMetadataBackend) -> None:
         """Count should apply filters."""
         mock_conn = AsyncMock()
         mock_conn.fetchval.return_value = 10
@@ -190,18 +174,14 @@ class TestPostgresOperationsWithMockedPool:
         mock_conn.fetchval.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_get_memories_by_ids_empty(
-        self, mock_backend: PostgresMetadataBackend
-    ) -> None:
+    async def test_get_memories_by_ids_empty(self, mock_backend: PostgresMetadataBackend) -> None:
         """Get by IDs with empty list should return empty list."""
         result = await mock_backend.get_memories_by_ids([])
 
         assert result == []
 
     @pytest.mark.asyncio
-    async def test_update_access(
-        self, mock_backend: PostgresMetadataBackend
-    ) -> None:
+    async def test_update_access(self, mock_backend: PostgresMetadataBackend) -> None:
         """Update access should increment count and update timestamp."""
         mock_conn = AsyncMock()
         mock_backend._pool.acquire.return_value.__aenter__.return_value = mock_conn
@@ -211,9 +191,7 @@ class TestPostgresOperationsWithMockedPool:
         mock_conn.execute.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_list_memories_empty_result(
-        self, mock_backend: PostgresMetadataBackend
-    ) -> None:
+    async def test_list_memories_empty_result(self, mock_backend: PostgresMetadataBackend) -> None:
         """List memories should handle empty results."""
         mock_conn = AsyncMock()
         mock_conn.fetch.return_value = []
