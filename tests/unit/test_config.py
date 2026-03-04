@@ -100,23 +100,17 @@ class TestConsolidationConfig:
 
     def test_invalid_min_memories_raises(self) -> None:
         """min_memories_for_consolidation < 1 should raise ValueError."""
-        with pytest.raises(
-            ValueError, match="min_memories_for_consolidation must be at least 1"
-        ):
+        with pytest.raises(ValueError, match="min_memories_for_consolidation must be at least 1"):
             ConsolidationConfig(min_memories_for_consolidation=0)
 
     def test_invalid_similarity_threshold_raises(self) -> None:
         """similarity_threshold outside [0, 1] should raise ValueError."""
-        with pytest.raises(
-            ValueError, match="similarity_threshold must be between 0 and 1"
-        ):
+        with pytest.raises(ValueError, match="similarity_threshold must be between 0 and 1"):
             ConsolidationConfig(similarity_threshold=1.5)
 
     def test_invalid_interval_raises(self) -> None:
         """Non-positive interval should raise ValueError."""
-        with pytest.raises(
-            ValueError, match="consolidation_interval_hours must be positive"
-        ):
+        with pytest.raises(ValueError, match="consolidation_interval_hours must be positive"):
             ConsolidationConfig(consolidation_interval_hours=0)
 
 
