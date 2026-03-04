@@ -339,10 +339,7 @@ class RetrievalEngine:
                     max_sim_to_selected = max(max_sim_to_selected, sim)
 
                 # MMR score
-                mmr = (
-                    self.mmr_lambda * relevance
-                    - (1 - self.mmr_lambda) * max_sim_to_selected
-                )
+                mmr = self.mmr_lambda * relevance - (1 - self.mmr_lambda) * max_sim_to_selected
 
                 if mmr > best_mmr:
                     best_mmr = mmr
