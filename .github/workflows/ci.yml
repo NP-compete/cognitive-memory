@@ -121,4 +121,10 @@ jobs:
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/cognitive_memory_test
           REDIS_URL: redis://localhost:6379
-        run: pytest tests/integration -v -m integration
+        run: |
+          # Allow job to pass if no integration tests exist yet (issue #16)
+          if [ -n "$(find tests/integration -name 'test_*.py' 2>/dev/null)" ]; then
+            pytest tests/integration -v -m integration
+          else
+            echo "No integration tests found yet - skipping (see issue #16)"
+          fi
