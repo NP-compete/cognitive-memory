@@ -302,7 +302,7 @@ class TestContextSummary:
         summary = manager.get_context_summary(max_items=2)
 
         assert "second" in summary  # Highest activation
-        assert "third" in summary   # Second highest
+        assert "third" in summary  # Second highest
         assert "first" not in summary
 
 
