@@ -1,112 +1,215 @@
-# Cognitive Memory
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-In_Development-yellow?style=for-the-badge" alt="Status">
+  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/github/license/NP-compete/cognitive-memory?style=for-the-badge" alt="License">
+</p>
 
-[![PyPI version](https://badge.fury.io/py/cognitive-memory.svg)](https://badge.fury.io/py/cognitive-memory)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![CI](https://github.com/NP-compete/cognitive-memory/actions/workflows/ci.yml/badge.svg)](https://github.com/NP-compete/cognitive-memory/actions/workflows/ci.yml)
+<p align="center">
+  <a href="https://github.com/NP-compete/cognitive-memory/actions/workflows/ci.yml">
+    <img src="https://github.com/NP-compete/cognitive-memory/actions/workflows/ci.yml/badge.svg" alt="CI">
+  </a>
+  <a href="https://codecov.io/gh/NP-compete/cognitive-memory">
+    <img src="https://codecov.io/gh/NP-compete/cognitive-memory/branch/main/graph/badge.svg" alt="Coverage">
+  </a>
+  <a href="https://pypi.org/project/cognitive-memory/">
+    <img src="https://img.shields.io/pypi/v/cognitive-memory?color=blue" alt="PyPI">
+  </a>
+  <a href="https://pypi.org/project/cognitive-memory/">
+    <img src="https://img.shields.io/pypi/dm/cognitive-memory" alt="Downloads">
+  </a>
+</p>
 
-**Memory that forgets, like humans do.**
+<h1 align="center">🧠 Cognitive Memory</h1>
 
-A production-grade memory system for AI agents with intelligent forgetting. Unlike traditional agent memory that accumulates indefinitely, Cognitive Memory implements principled decay, importance-based retention, and automatic consolidation—mimicking how human memory actually works.
+<p align="center">
+  <strong>Memory that forgets, like humans do.</strong>
+</p>
+
+<p align="center">
+  A production-grade memory system for AI agents with intelligent forgetting.<br>
+  Built on cognitive science principles: decay, rehearsal, consolidation, and importance-based retention.
+</p>
+
+<p align="center">
+  <a href="#the-problem">Problem</a> •
+  <a href="#the-solution">Solution</a> •
+  <a href="#architecture">Architecture</a> •
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#documentation">Docs</a> •
+  <a href="#contributing">Contributing</a>
+</p>
+
+---
 
 ## The Problem
 
-Current agent memory solutions (Mem0, Zep, MemGPT) accumulate memories forever. This causes:
+Current agent memory solutions accumulate memories **forever**. This causes:
 
-- **Context pollution** — irrelevant old memories dilute retrieval quality
-- **Cost explosion** — vector stores grow unbounded  
-- **Temporal confusion** — no distinction between recent and ancient context
-- **No consolidation** — raw events never become structured knowledge
+| Issue | Impact |
+|-------|--------|
+| 🗑️ **Context Pollution** | Irrelevant old memories dilute retrieval quality |
+| 💸 **Cost Explosion** | Vector stores grow unbounded |
+| ⏰ **Temporal Confusion** | No distinction between recent and ancient context |
+| 📦 **No Consolidation** | Raw events never become structured knowledge |
+
+**Humans don't work this way.** We forget. And that's a feature, not a bug.
+
+---
 
 ## The Solution
 
-Cognitive Memory implements a biologically-inspired memory architecture:
-
-| Feature | Description |
-|---------|-------------|
-| **Decay** | Memories weaken over time (exponential decay) |
-| **Rehearsal** | Accessing a memory strengthens it |
-| **Importance** | Multi-factor scoring determines retention priority |
-| **Consolidation** | Weak episodic memories become semantic facts |
-| **Forgetting** | Below-threshold memories are pruned |
-
-## Architecture
+Cognitive Memory implements a **biologically-inspired** memory architecture:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        MEMORY TIERS                              │
+│                     HOW HUMAN MEMORY WORKS                       │
 ├─────────────────────────────────────────────────────────────────┤
-│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐       │
-│  │    WORKING    │  │   EPISODIC    │  │   SEMANTIC    │       │
-│  │    MEMORY     │  │    MEMORY     │  │    MEMORY     │       │
-│  │  (in-context) │  │ (vector store)│  │ (knowledge    │       │
-│  │               │  │   + decay     │  │    graph)     │       │
-│  └───────────────┘  └───────────────┘  └───────────────┘       │
-│         │                   │                  │                │
-│         ▼                   ▼                  ▼                │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │              CONSOLIDATION ENGINE                        │   │
-│  │    (episodic → semantic transformation, pruning)         │   │
-│  └─────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│   📥 Experience ──▶ 🧠 Working Memory ──▶ 💾 Long-term Memory   │
+│                           │                       │              │
+│                           │                       ▼              │
+│                           │              ┌───────────────┐       │
+│                           │              │  Consolidation │       │
+│                           │              │  (during sleep)│       │
+│                           │              └───────┬───────┘       │
+│                           │                      │               │
+│                           ▼                      ▼               │
+│                    ┌─────────────┐      ┌─────────────┐         │
+│                    │   Decay     │      │  Semantic   │         │
+│                    │ (forgetting)│      │   Facts     │         │
+│                    └─────────────┘      └─────────────┘         │
+│                                                                  │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Installation
+### Key Features
+
+| Feature | Description |
+|---------|-------------|
+| **⏳ Decay** | Memories weaken over time (exponential decay) |
+| **🔄 Rehearsal** | Accessing a memory strengthens it |
+| **⭐ Importance** | Multi-factor scoring determines retention priority |
+| **🔀 Consolidation** | Weak episodic memories become semantic facts |
+| **🗑️ Forgetting** | Below-threshold memories are pruned |
+
+---
+
+## Architecture
+
+### Memory Tiers
+
+| Tier | Purpose | Retention | Storage |
+|------|---------|-----------|---------|
+| **Working** | Current conversation | Session | In-memory |
+| **Episodic** | Past interactions | Days-weeks | Vector DB |
+| **Semantic** | Extracted facts | Months-years | Knowledge Graph |
+| **Procedural** | Skills, patterns | Permanent | PostgreSQL |
+
+### System Overview
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        MEMORY SYSTEM                             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
+│  │   WORKING   │  │  EPISODIC   │  │  SEMANTIC   │             │
+│  │   MEMORY    │  │   MEMORY    │  │   MEMORY    │             │
+│  │ (context)   │  │  (events)   │  │  (facts)    │             │
+│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘             │
+│         │                │                │                     │
+│         ▼                ▼                ▼                     │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                   RETRIEVAL ENGINE                       │   │
+│  │         (decay-aware scoring + MMR diversity)            │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                              │                                  │
+│                              ▼                                  │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                 CONSOLIDATION ENGINE                     │   │
+│  │    (clustering → summarization → fact extraction)        │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Quick Start
+
+### Installation
 
 ```bash
 pip install cognitive-memory
 ```
 
-## Quick Start
+### Basic Usage
 
 ```python
-from cognitive_memory import MemoryManager, MemoryConfig
+from cognitive_memory import MemoryManager
 
-# Initialize with default configuration
-config = MemoryConfig()
-memory = MemoryManager(config)
+# Initialize
+memory = MemoryManager()
 
-# Store a memory
+# Remember something
 memory.remember(
-    content="User prefers dark mode and uses vim keybindings",
+    content="User prefers dark mode and vim keybindings",
     source="conversation",
 )
 
-# Retrieve relevant memories (decay-aware)
+# Recall relevant memories (decay-aware)
 results = memory.recall(
     query="What are the user's preferences?",
     k=5,
 )
 
-# Build context for LLM (from all tiers)
+# Build context for LLM
 context = memory.get_context(
-    query="Help user configure their editor",
+    query="Help configure their editor",
     max_tokens=4000,
 )
-
-# Run consolidation (or let background worker handle it)
-memory.consolidate()
 ```
 
-## Key Concepts
+### With LangGraph
 
-### Memory Decay
+```python
+from cognitive_memory.integrations import CognitiveCheckpointer
 
-Every memory has a strength that decays exponentially over time:
+checkpointer = CognitiveCheckpointer()
+graph = builder.compile(checkpointer=checkpointer)
+```
+
+### With LangChain
+
+```python
+from cognitive_memory.integrations import CognitiveMemory
+
+memory = CognitiveMemory()
+chain = ConversationChain(llm=llm, memory=memory)
+```
+
+---
+
+## How It Works
+
+### 1. Decay Function
+
+Every memory has a strength that decays exponentially:
 
 ```
 S(t) = S₀ × e^(-λ × Δt)
 ```
 
-- **S₀**: Initial strength (boosted by rehearsal)
-- **λ**: Decay rate (configurable per memory type)
-- **Δt**: Time since creation
+| Variable | Meaning |
+|----------|---------|
+| `S(t)` | Strength at time t |
+| `S₀` | Initial strength |
+| `λ` | Decay rate |
+| `Δt` | Time elapsed |
 
-When you retrieve a memory, its strength is **boosted** (rehearsal effect), mimicking how recalling something helps you remember it.
+**Rehearsal Effect:** When you retrieve a memory, its strength is boosted—just like how recalling something helps you remember it.
 
-### Importance Scoring
-
-Not all memories are equal. Importance is computed from:
+### 2. Importance Scoring
 
 | Factor | Weight | Description |
 |--------|--------|-------------|
@@ -117,7 +220,7 @@ Not all memories are equal. Importance is computed from:
 | Explicit markers | 20% | User said "remember this" |
 | Entity relevance | 10% | Contains important entities |
 
-### Consolidation
+### 3. Consolidation
 
 Periodically, weak episodic memories are:
 
@@ -128,79 +231,12 @@ Periodically, weak episodic memories are:
 
 This mimics how human memory consolidates during sleep.
 
-### Forgetting
-
-Memories below the forget threshold are candidates for deletion—but only if:
-- They've been consolidated, OR
-- They're not marked as critical
-
-This prevents unbounded growth while preserving important information.
-
-## Memory Tiers
-
-| Tier | Purpose | Retention | Storage |
-|------|---------|-----------|---------|
-| **Working** | Current conversation | Session | In-memory |
-| **Episodic** | Past interactions | Days-weeks | Vector DB |
-| **Semantic** | Extracted facts | Months-years | Knowledge graph |
-| **Procedural** | Skills, patterns | Permanent | PostgreSQL |
-
-## Integrations
-
-### LangGraph
-
-```python
-from cognitive_memory.integrations import CognitiveCheckpointer
-
-checkpointer = CognitiveCheckpointer.from_config(config)
-graph = builder.compile(checkpointer=checkpointer)
-```
-
-### LangChain
-
-```python
-from cognitive_memory.integrations import CognitiveMemory
-
-memory = CognitiveMemory.from_config(config)
-chain = ConversationChain(llm=llm, memory=memory)
-```
-
-## Configuration
-
-```python
-from cognitive_memory import MemoryConfig, DecayConfig, ImportanceConfig
-
-config = MemoryConfig(
-    # Decay settings
-    decay=DecayConfig(
-        episodic_decay_rate=0.1,      # per day
-        semantic_decay_rate=0.01,     # per day
-        consolidation_threshold=0.3,
-        forget_threshold=0.1,
-        rehearsal_boost=1.5,
-    ),
-    
-    # Importance settings
-    importance=ImportanceConfig(
-        access_frequency_weight=0.25,
-        recency_weight=0.20,
-        emotional_weight=0.15,
-        surprise_weight=0.10,
-        explicit_marker_weight=0.20,
-        entity_relevance_weight=0.10,
-    ),
-    
-    # Storage backends
-    vector_store="qdrant",      # qdrant, pinecone, pgvector
-    graph_store="neo4j",        # neo4j, memgraph, none
-    metadata_store="postgresql",
-)
-```
+---
 
 ## Comparison
 
 | Feature | Mem0 | Zep | MemGPT | **Cognitive Memory** |
-|---------|------|-----|--------|----------------------|
+|---------|:----:|:---:|:------:|:--------------------:|
 | Decay function | ❌ | ❌ | ❌ | ✅ |
 | Importance scoring | Basic | Basic | ❌ | ✅ Multi-factor |
 | Auto consolidation | ❌ | ❌ | Manual | ✅ |
@@ -209,23 +245,51 @@ config = MemoryConfig(
 | Knowledge graph | ❌ | ❌ | ❌ | ✅ |
 | LangGraph native | ❌ | ❌ | ❌ | ✅ |
 
+---
+
 ## Documentation
 
-- [Architecture](docs/architecture.md)
-- [Configuration](docs/configuration.md)
-- [Algorithms](docs/algorithms.md)
-- [Integrations](docs/integrations.md)
-- [Deployment](docs/deployment.md)
-- [Benchmarks](docs/benchmarks.md)
+| Document | Description |
+|----------|-------------|
+| [Architecture](docs/architecture.md) | System design and components |
+| [Algorithms](docs/algorithms.md) | Decay, importance, consolidation |
+| [Configuration](docs/configuration.md) | All configuration options |
+| [Integrations](docs/integrations.md) | LangGraph, LangChain setup |
+| [Deployment](docs/deployment.md) | Production deployment guide |
+| [Benchmarks](docs/benchmarks.md) | Performance measurements |
 
-## Development
+---
+
+## Project Status
+
+🚧 **In Active Development**
+
+This project is under active development. The core architecture is designed, and implementation is in progress.
+
+### Roadmap
+
+- [ ] Core memory models and configuration
+- [ ] Decay and importance engines
+- [ ] Retrieval with decay-aware scoring
+- [ ] Consolidation engine
+- [ ] LangGraph integration
+- [ ] LangChain integration
+- [ ] REST API
+- [ ] Benchmarks and evaluation
+- [ ] v0.1.0 release
+
+**Want to contribute?** Check out [CONTRIBUTING.md](CONTRIBUTING.md) or join the [Discussions](https://github.com/NP-compete/cognitive-memory/discussions).
+
+---
+
+## Contributing
+
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ```bash
-# Clone the repository
+# Clone and setup
 git clone https://github.com/NP-compete/cognitive-memory.git
 cd cognitive-memory
-
-# Install development dependencies
 pip install -e ".[dev]"
 
 # Run tests
@@ -235,23 +299,44 @@ make test
 make lint
 ```
 
-## Contributing
+---
 
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+## Citation
+
+If you use Cognitive Memory in your research, please cite:
+
+```bibtex
+@software{cognitive_memory,
+  author = {Dutta, Soham},
+  title = {Cognitive Memory: Memory that forgets, like humans do},
+  url = {https://github.com/NP-compete/cognitive-memory},
+  year = {2026}
+}
+```
+
+---
 
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
 
+---
+
 ## Acknowledgments
 
 - Inspired by cognitive science research on human memory
-- Built on [LangGraph](https://github.com/langchain-ai/langgraph) and [LangChain](https://github.com/langchain-ai/langchain)
-- Vector storage powered by [Qdrant](https://qdrant.tech/)
-- Knowledge graph powered by [Neo4j](https://neo4j.com/)
+- Built for the [LangGraph](https://github.com/langchain-ai/langgraph) and [LangChain](https://github.com/langchain-ai/langchain) ecosystems
+- Vector storage: [Qdrant](https://qdrant.tech/), [Pinecone](https://pinecone.io/)
+- Knowledge graph: [Neo4j](https://neo4j.com/)
 
 ---
 
 <p align="center">
   <strong>Memory that forgets, so your agents remember what matters.</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/NP-compete/cognitive-memory/stargazers">⭐ Star us</a> •
+  <a href="https://github.com/NP-compete/cognitive-memory/issues">🐛 Report Bug</a> •
+  <a href="https://github.com/NP-compete/cognitive-memory/discussions">💬 Discussions</a>
 </p>

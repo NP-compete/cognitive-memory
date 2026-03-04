@@ -1,0 +1,51 @@
+name: ❓ Question
+description: Ask a question about usage or implementation
+title: "[Question]: "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question? We're happy to help!
+        
+        **Note:** For general discussions, consider using [GitHub Discussions](https://github.com/NP-compete/cognitive-memory/discussions) instead.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What would you like to know?
+      placeholder: Your question here
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Any relevant context or code.
+      render: python
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Installation/Setup
+        - Configuration
+        - Usage/API
+        - Integration (LangGraph/LangChain)
+        - Storage Backends
+        - Performance
+        - Architecture/Design
+        - Other
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues and discussions
+          required: true
+        - label: I have read the documentation
+          required: true
