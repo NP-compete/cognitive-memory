@@ -334,9 +334,7 @@ class ImportanceEngine:
             Source multiplier (typically 0.5-2.0).
         """
         source_value = memory.source
-        source_key = (
-            source_value.value if hasattr(source_value, "value") else str(source_value)
-        )
+        source_key = source_value.value if hasattr(source_value, "value") else str(source_value)
         return self.source_weights.get(source_key, 1.0)
 
     def get_importance(

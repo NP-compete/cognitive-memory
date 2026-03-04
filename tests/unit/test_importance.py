@@ -346,9 +346,7 @@ class TestConvenienceMethods:
         """batch_calculate_importance should process multiple memories."""
         engine = ImportanceEngine()
         now = datetime.now(timezone.utc)
-        memories = [
-            MockMemory(created_at=now - timedelta(hours=i)) for i in range(5)
-        ]
+        memories = [MockMemory(created_at=now - timedelta(hours=i)) for i in range(5)]
 
         results = engine.batch_calculate_importance(memories, now)
 
@@ -360,9 +358,7 @@ class TestConvenienceMethods:
         """rank_by_importance should sort by score descending."""
         engine = ImportanceEngine()
         now = datetime.now(timezone.utc)
-        memories = [
-            MockMemory(created_at=now - timedelta(hours=i * 10)) for i in range(5)
-        ]
+        memories = [MockMemory(created_at=now - timedelta(hours=i * 10)) for i in range(5)]
 
         ranked = engine.rank_by_importance(memories, now)
 
