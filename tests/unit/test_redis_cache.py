@@ -197,9 +197,7 @@ class TestRedisOperationsWithMockedClient:
         result = await mock_backend.incr("counter", 3)
 
         assert result == 5
-        mock_backend._client.incrby.assert_called_once_with(
-            "cognitive_memory:counter", 3
-        )
+        mock_backend._client.incrby.assert_called_once_with("cognitive_memory:counter", 3)
 
     @pytest.mark.asyncio
     async def test_expire(self, mock_backend: RedisCacheBackend) -> None:
@@ -209,9 +207,7 @@ class TestRedisOperationsWithMockedClient:
         result = await mock_backend.expire("key", 600)
 
         assert result is True
-        mock_backend._client.expire.assert_called_once_with(
-            "cognitive_memory:key", 600
-        )
+        mock_backend._client.expire.assert_called_once_with("cognitive_memory:key", 600)
 
     @pytest.mark.asyncio
     async def test_clear_all(self, mock_backend: RedisCacheBackend) -> None:
@@ -286,9 +282,7 @@ class TestWorkingMemoryMethods:
         mock_backend._client.setex.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_get_working_memory_exists(
-        self, mock_backend: RedisCacheBackend
-    ) -> None:
+    async def test_get_working_memory_exists(self, mock_backend: RedisCacheBackend) -> None:
         """Get working memory should return memories list."""
         mock_backend._client.get.return_value = '[{"id": "m1"}]'
 
@@ -297,9 +291,7 @@ class TestWorkingMemoryMethods:
         assert result == [{"id": "m1"}]
 
     @pytest.mark.asyncio
-    async def test_get_working_memory_empty(
-        self, mock_backend: RedisCacheBackend
-    ) -> None:
+    async def test_get_working_memory_empty(self, mock_backend: RedisCacheBackend) -> None:
         """Get working memory should return empty list if not found."""
         mock_backend._client.get.return_value = None
 
@@ -329,9 +321,7 @@ class TestRetrievalCacheMethods:
         mock_backend._client.setex.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_get_cached_retrieval_exists(
-        self, mock_backend: RedisCacheBackend
-    ) -> None:
+    async def test_get_cached_retrieval_exists(self, mock_backend: RedisCacheBackend) -> None:
         """Get cached retrieval should return results."""
         mock_backend._client.get.return_value = '[{"id": "m1"}]'
 
@@ -340,9 +330,7 @@ class TestRetrievalCacheMethods:
         assert result == [{"id": "m1"}]
 
     @pytest.mark.asyncio
-    async def test_get_cached_retrieval_missing(
-        self, mock_backend: RedisCacheBackend
-    ) -> None:
+    async def test_get_cached_retrieval_missing(self, mock_backend: RedisCacheBackend) -> None:
         """Get cached retrieval should return None if not found."""
         mock_backend._client.get.return_value = None
 
@@ -370,9 +358,7 @@ class TestScoreCacheMethods:
         mock_backend._client.setex.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_get_cached_score_exists(
-        self, mock_backend: RedisCacheBackend
-    ) -> None:
+    async def test_get_cached_score_exists(self, mock_backend: RedisCacheBackend) -> None:
         """Get cached score should return float."""
         mock_backend._client.get.return_value = "0.85"
 
@@ -381,9 +367,7 @@ class TestScoreCacheMethods:
         assert result == 0.85
 
     @pytest.mark.asyncio
-    async def test_get_cached_score_missing(
-        self, mock_backend: RedisCacheBackend
-    ) -> None:
+    async def test_get_cached_score_missing(self, mock_backend: RedisCacheBackend) -> None:
         """Get cached score should return None if not found."""
         mock_backend._client.get.return_value = None
 
