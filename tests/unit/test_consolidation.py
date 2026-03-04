@@ -219,10 +219,12 @@ class TestCalculateCentroid:
         """Multiple embeddings should average to centroid."""
         engine = ConsolidationEngine()
 
-        centroid = engine._calculate_centroid([
-            [1.0, 0.0],
-            [0.0, 1.0],
-        ])
+        centroid = engine._calculate_centroid(
+            [
+                [1.0, 0.0],
+                [0.0, 1.0],
+            ]
+        )
 
         assert centroid == [0.5, 0.5]
 
@@ -250,11 +252,13 @@ class TestFindSharedItems:
         """Items in all lists should be returned."""
         engine = ConsolidationEngine()
 
-        shared = engine._find_shared_items([
-            ["a", "b"],
-            ["a", "c"],
-            ["a", "d"],
-        ])
+        shared = engine._find_shared_items(
+            [
+                ["a", "b"],
+                ["a", "c"],
+                ["a", "d"],
+            ]
+        )
 
         assert "a" in shared
 

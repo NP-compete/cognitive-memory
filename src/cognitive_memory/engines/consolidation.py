@@ -244,9 +244,7 @@ class ConsolidationEngine:
         centroid = self._calculate_centroid([m.embedding for m in cluster])
 
         # Calculate average similarity to centroid
-        similarities = [
-            self._cosine_similarity(m.embedding, centroid) for m in cluster
-        ]
+        similarities = [self._cosine_similarity(m.embedding, centroid) for m in cluster]
         avg_similarity = sum(similarities) / len(similarities) if similarities else 0.0
 
         # Combine importance scores
