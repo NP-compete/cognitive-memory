@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
+from cognitive_memory.core.config import ImportanceConfig
 from cognitive_memory.engines.importance import ImportanceEngine, ImportanceResult
 
 
@@ -391,3 +392,106 @@ class TestConvenienceMethods:
         for m in filtered:
             score = engine.get_importance(m, now)
             assert 0.3 <= score <= 0.7
+
+
+class TestFromConfig:
+    """Tests for from_config class method."""
+
+    def test_from_config_creates_engine(self) -> None:
+        """from_config should create engine from ImportanceConfig."""
+        config = ImportanceConfig(
+            recency_weight=0.3,
+            frequency_weight=0.1,
+            emotional_weight=0.15,
+            surprise_weight=0.1,
+            entity_weight=0.15,
+            explicit_weight=0.2,
+        )
+
+        engine = ImportanceEngine.from_config(config)
+
+        assert engine.recency_weight == 0.3
+        assert engine.frequency_weight == 0.1
+        assert engine.emotional_weight == 0.15
+        assert engine.source_weights == config.source_weights
+
+
+class TestNaiveDatetimeHandling:
+    """Tests for naive datetime fallback in importance engine."""
+
+    def test_naive_created_at(self) -> None:
+        """Should handle naive created_at by assuming UTC."""
+        engine = ImportanceEngine()
+        naive_time = datetime(2025, 1, 1, 0, 0, 0)
+        now = datetime(2025, 1, 2, 0, 0, 0, tzinfo=timezone.utc)
+        memory = MockMemory(created_at=naive_time)
+
+        result = engine.calculate_importance(memory, now)
+
+        assert 0.0 <= result.recency_score <= 1.0
+
+    def test_naive_current_time(self) -> None:
+        """Should handle naive current_time by assuming UTC."""
+        engine = ImportanceEngine()
+        created = datetime(2025, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+        naive_now = datetime(2025, 1, 2, 0, 0, 0)
+        memory = MockMemory(created_at=created)
+
+        result = engine.calculate_importance(memory, naive_now)
+
+        assert 0.0 <= result.recency_score <= 1.0
+
+
+class TestInvalidMetadata:
+    """Tests for invalid metadata in explicit score."""
+
+    def test_invalid_metadata_importance_type(self) -> None:
+        """Invalid metadata importance value should fallback to 0.5."""
+        engine = ImportanceEngine()
+        now = datetime.now(timezone.utc)
+        memory = MockMemory(metadata={"importance": "not-a-number"})
+
+        result = engine.calculate_importance(memory, now)
+
+        assert result.explicit_score == 0.5
+
+    def test_metadata_importance_none_type(self) -> None:
+        """None metadata importance should fallback to 0.5."""
+        engine = ImportanceEngine()
+        now = datetime.now(timezone.utc)
+        memory = MockMemory(metadata={"importance": None})
+
+        result = engine.calculate_importance(memory, now)
+
+        assert result.explicit_score == 0.5
+
+
+class TestBatchAndFilterDefaultTime:
+    """Tests for batch/filter with default time (None)."""
+
+    def test_batch_default_time(self) -> None:
+        """batch_calculate_importance should work without explicit time."""
+        engine = ImportanceEngine()
+        memories = [MockMemory()]
+
+        results = engine.batch_calculate_importance(memories)
+
+        assert len(results) == 1
+
+    def test_rank_default_time(self) -> None:
+        """rank_by_importance should work without explicit time."""
+        engine = ImportanceEngine()
+        memories = [MockMemory()]
+
+        results = engine.rank_by_importance(memories)
+
+        assert len(results) == 1
+
+    def test_filter_default_time(self) -> None:
+        """filter_by_importance should work without explicit time."""
+        engine = ImportanceEngine()
+        memories = [MockMemory()]
+
+        results = engine.filter_by_importance(memories)
+
+        assert len(results) == 1

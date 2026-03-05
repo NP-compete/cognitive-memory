@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
+from cognitive_memory.core.config import DecayConfig
 from cognitive_memory.engines.decay import DecayEngine, DecayResult
 
 
@@ -307,3 +308,168 @@ class TestTimeUnits:
         result = engine.calculate_decay(memory, now)
 
         assert result.time_elapsed == pytest.approx(7.0, abs=0.1)
+
+
+class TestFromConfig:
+    """Tests for from_config class method."""
+
+    def test_from_config_creates_engine(self) -> None:
+        """from_config should create engine from DecayConfig."""
+        config = DecayConfig(
+            decay_rate=0.2,
+            min_strength=0.05,
+            rehearsal_boost=0.3,
+            rehearsal_decay_rate=0.08,
+            time_unit="days",
+        )
+
+        engine = DecayEngine.from_config(config)
+
+        assert engine.decay_rate == 0.2
+        assert engine.min_strength == 0.05
+        assert engine.rehearsal_boost == 0.3
+        assert engine.rehearsal_decay_rate == 0.08
+        assert engine.time_unit == "days"
+
+
+class TestApplyRehearsalInPlace:
+    """Tests for apply_rehearsal_in_place."""
+
+    def test_increments_access_count(self) -> None:
+        """Should increment access_count by 1."""
+        engine = DecayEngine()
+        memory = MockMemory(access_count=3)
+
+        engine.apply_rehearsal_in_place(memory)
+
+        assert memory.access_count == 4
+
+    def test_updates_last_accessed_at(self) -> None:
+        """Should set last_accessed_at to approximately now."""
+        engine = DecayEngine()
+        old_time = datetime(2025, 1, 1, tzinfo=timezone.utc)
+        memory = MockMemory(last_accessed_at=old_time)
+
+        before = datetime.now(timezone.utc)
+        engine.apply_rehearsal_in_place(memory)
+        after = datetime.now(timezone.utc)
+
+        assert before <= memory.last_accessed_at <= after
+
+
+class TestNaiveDatetimeHandling:
+    """Tests for naive datetime fallback."""
+
+    def test_naive_created_at(self) -> None:
+        """Should handle naive created_at by assuming UTC."""
+        engine = DecayEngine()
+        naive_time = datetime(2025, 1, 1, 0, 0, 0)
+        now = datetime(2025, 1, 2, 0, 0, 0, tzinfo=timezone.utc)
+        memory = MockMemory(initial_strength=1.0, created_at=naive_time)
+
+        result = engine.calculate_decay(memory, now)
+
+        assert result.time_elapsed == pytest.approx(24.0, abs=0.1)
+
+    def test_naive_current_time(self) -> None:
+        """Should handle naive current_time by assuming UTC."""
+        engine = DecayEngine()
+        created = datetime(2025, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+        naive_now = datetime(2025, 1, 2, 0, 0, 0)
+        memory = MockMemory(initial_strength=1.0, created_at=created)
+
+        result = engine.calculate_decay(memory, naive_now)
+
+        assert result.time_elapsed == pytest.approx(24.0, abs=0.1)
+
+    def test_naive_last_accessed_at_in_rehearsal(self) -> None:
+        """Should handle naive last_accessed_at in rehearsal calc."""
+        engine = DecayEngine(rehearsal_boost=0.2)
+        created = datetime(2025, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+        naive_accessed = datetime(2025, 1, 1, 23, 0, 0)
+        now = datetime(2025, 1, 2, 0, 0, 0, tzinfo=timezone.utc)
+
+        memory = MockMemory(
+            initial_strength=1.0,
+            created_at=created,
+            last_accessed_at=naive_accessed,
+            access_count=5,
+        )
+
+        result = engine.calculate_decay(memory, now)
+
+        assert result.rehearsal_bonus > 0
+
+
+class TestEdgeCases:
+    """Tests for edge cases in decay engine."""
+
+    def test_zero_initial_strength_already_below(self) -> None:
+        """With initial_strength=0, strength is at min, already below any threshold."""
+        engine = DecayEngine()
+        now = datetime.now(timezone.utc)
+        memory = MockMemory(initial_strength=0.0, created_at=now)
+
+        result = engine.estimate_time_to_threshold(memory, 0.5, now)
+
+        assert result == 0.0
+
+    def test_threshold_equals_initial_already_at(self) -> None:
+        """When current strength <= threshold, returns 0.0 immediately."""
+        engine = DecayEngine(decay_rate=1.0)
+        now = datetime.now(timezone.utc)
+        created = now - timedelta(hours=10)
+        memory = MockMemory(initial_strength=0.5, created_at=created)
+
+        result = engine.estimate_time_to_threshold(memory, 0.5, now)
+
+        assert result == 0.0
+
+    def test_threshold_ratio_ge_one_returns_none(self) -> None:
+        """When threshold/initial >= 1, returns None (can't reach by decay alone)."""
+        engine = DecayEngine(rehearsal_boost=0.2)
+        now = datetime.now(timezone.utc)
+        memory = MockMemory(
+            initial_strength=0.3,
+            created_at=now,
+            last_accessed_at=now,
+            access_count=10,
+        )
+
+        result = engine.estimate_time_to_threshold(memory, 0.4, now)
+
+        assert result is None
+
+    def test_default_current_time_in_estimate(self) -> None:
+        """estimate_time_to_threshold uses now when current_time is None."""
+        engine = DecayEngine()
+        memory = MockMemory(initial_strength=1.0, created_at=datetime.now(timezone.utc))
+
+        result = engine.estimate_time_to_threshold(memory, 0.5)
+
+        assert result is not None
+        assert result > 0
+
+    def test_unknown_time_unit_defaults_to_hours(self) -> None:
+        """Unknown time_unit should default to 3600 seconds (hours)."""
+        engine = DecayEngine(time_unit="fortnights")
+
+        assert engine._time_unit_seconds == 3600
+
+    def test_batch_calculate_default_time(self) -> None:
+        """batch_calculate_decay should work without explicit time."""
+        engine = DecayEngine()
+        memories = [MockMemory(initial_strength=1.0)]
+
+        results = engine.batch_calculate_decay(memories)
+
+        assert len(results) == 1
+
+    def test_filter_by_strength_default_time(self) -> None:
+        """filter_by_strength should work without explicit time."""
+        engine = DecayEngine()
+        memories = [MockMemory(initial_strength=1.0)]
+
+        result = engine.filter_by_strength(memories)
+
+        assert len(result) == 1
