@@ -251,7 +251,7 @@ class SQLiteMetadataBackend(MetadataBackend):
         )
         await self._conn.commit()
 
-        return cursor.rowcount > 0
+        return bool(cursor.rowcount and cursor.rowcount > 0)
 
     async def list_memories(
         self,
@@ -349,7 +349,7 @@ class SQLiteMetadataBackend(MetadataBackend):
         )
         await self._conn.commit()
 
-        return cursor.rowcount
+        return int(cursor.rowcount) if cursor.rowcount else 0
 
     async def count(
         self,
